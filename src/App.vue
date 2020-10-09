@@ -1,32 +1,31 @@
 <template>
   <div id="app">
-    <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
-    </div>
+    <FooterNav></FooterNav>   
+    <!-- 使用组件  单双标签都可以使用-->
     <router-view/>
   </div>
 </template>
 
-<style lang="scss">
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
+<script>
+// 导入组件
+import FooterNav from '@/components/FooterNav'   // 导入字体图标
+export default{
+  components:{
+    FooterNav,
+  },
 }
+</script>
 
-#nav {
-  padding: 30px;
-
-  a {
-    font-weight: bold;
-    color: #2c3e50;
-
-    &.router-link-exact-active {
-      color: #42b983;
-    }
+<style lang="scss" scoped>
+  *{
+  margin: 0;
+  padding: 0;
   }
-}
+  html,body{
+    width: 100%;
+    touch-action: none;    // 禁止移动端用户自己缩放
+  }
+  ul,li{
+    list-style: none;
+  }
 </style>
