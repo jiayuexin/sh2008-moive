@@ -21,6 +21,7 @@
     ul {
         display: flex;
         text-align: center;
+        margin-top: 0;
         li {
             flex: 1;
             display: flex;
