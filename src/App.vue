@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <FooterNav></FooterNav>   
+    <FooterNav v-if="is_show"></FooterNav>   
     <!-- 使用组件  单双标签都可以使用-->
     <router-view/>
   </div>
@@ -10,13 +10,23 @@
 // 导入组件
 import FooterNav from '@/components/FooterNav'   // 导入字体图标
 export default{
-  components:{
+  data(){
+    return {
+      is_show:true
+    }
+  },
+  components: {
     FooterNav,
   },
+  created(){
+    this.eventBus.$on('footernav' , (flag)=>{
+      this.is_show = flag
+    })
+  }
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
   *{
   margin: 0;
   padding: 0;

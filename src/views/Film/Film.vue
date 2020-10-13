@@ -34,5 +34,6 @@ export default{
     position: fixed;
     top: 0;
     background: #ffffff;
+    z-index: 33;
 }
 </style>

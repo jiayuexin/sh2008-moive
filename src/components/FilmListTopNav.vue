@@ -21,12 +21,10 @@
     ul {
         display: flex;
         text-align: center;
-        margin-top: 0;
         li {
             flex: 1;
             display: flex;
             justify-content: center;
-            list-style: none;
             &.active {
                 span {
                     width: 40%;
@@ -35,7 +33,6 @@
                     color:#fe5100;
                 }
             }
-            margin-left: -40px;
         }
     }
 }
