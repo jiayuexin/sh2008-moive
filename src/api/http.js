@@ -12,7 +12,9 @@ axios.interceptors.request.use(
     function(config) {
         let host = '';
         let info = config.headers.info;
-        if ("banners" == info) {
+        if (info == 'city') {
+            host = 'mall.film-ticket.city.list'
+        } else if ("banners" == info) {
             host = 'mall.cfg.cinema.banners'
         } else if ("cinema" == info) {
             // 影院列表的头

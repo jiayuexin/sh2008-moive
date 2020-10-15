@@ -6,8 +6,8 @@ Vue.config.productionTip = false
 
 // 引入懒加载包
 import VueLazyload from 'vue-lazyload'
-Vue.use(VueLazyload,{
-  loading:'https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=3807623295,2569688265&fm=26&gp=0.jpg'
+Vue.use(VueLazyload, {
+    loading: 'https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=3807623295,2569688265&fm=26&gp=0.jpg'
 })
 
 // axios体验
@@ -24,10 +24,16 @@ Vue.use(VueLazyload,{
 //   console.log(ret);
 // })
 
+
+
 // 定义事件总线
 Vue.prototype.eventBus = new Vue();
 
+// 导入vuex的store对象
+import store from '@/store/vuex'
+
 new Vue({
-  router,
-  render: h => h(App)
+    router,
+    store,
+    render: h => h(App)
 }).$mount('#app')

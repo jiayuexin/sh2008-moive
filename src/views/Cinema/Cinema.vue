@@ -1,6 +1,7 @@
 
 <template>
 	<div class="ciname-list">
+		
 		<header class="header">
 			<div class="left">
 				<div
@@ -8,7 +9,8 @@
 					data-enter-time="1602496952"
 					data-click-fun="track_f_798828"
 				>
-					<span>上海</span>
+					<span @click="toWhere()">{{city}}</span>
+
 					<img
 						src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAAJCAMAAAAIAYw9AAAAOVBMVEVHcEwZGhsZGxsZGhskJCQaGhwbGxsZHR0ZGhsZGhsZGhsZGhsZHBwaGhsaGhwZGxsaGh0bGxsZGhsAwt9XAAAAEnRSTlMA5Z7pB2scPfrK6NJskn6fcnH7htMrAAAAVElEQVQI11XNOQKAIBAEwQEXl0NQ+/+PNfDucIIabaGbnqyHXQHKfC9zgaABVD8Xr8CQlgw5SVLKkBdJ8gmIZhGY/BUoha9qKwDEz/fJJP3y1i5GB2jVA/F2X5USAAAAAElFTkSuQmCC"
 						width="6px"
@@ -76,8 +78,11 @@
 				/></label>
 			</div>
 		</div>
+		<!-- <van-loading type="spinner" size="1000px" color="red" /> -->
 		<div class="cinema-layer"></div>
-		<div class="cinema-banner-wrap">
+		<div class="scroll" :style="{height:height + 'px'}">
+			<div>
+				<div class="cinema-banner-wrap" >
 			<ul class="cinema-list">
 				<li
 					class="cinema-banner-item"
@@ -91,8 +96,8 @@
 					<div class="type">{{ item.masterTitle }}</div>
 				</li>
 			</ul>
-		</div>
-		<div class="cinema-list-wrap">
+			</div>
+			<div class="cinema-list-wrap">
 			<ul class="cinema-list">
 				<li
 					class="cinema-list-item"
@@ -135,58 +140,80 @@
 					>
 				</li>
 			</ul>
+			</div>
+			</div>
 		</div>
 	</div>
 </template>
 
 
 <script>
-    import { cinemaListData,cinemaYouData } from "@/api/api"
+	import { cinemaListData,cinemaYouData,apiData } from "@/api/api"
+	import {mapState , mapMutations} from 'vuex'
+	import axios from 'axios'
+	import BScroll from 'better-scroll'
+	import Vue from 'vue';
+	import { Loading } from 'vant';
+
+	Vue.use(Loading);
+
     export default {
         data:function(){
             return {
                 cinema:[],
-                cinemaQ:[]
+				cinemaQ:[],
+				height:0,
+				bs:null,
+				citt:''
                 }
-        },
+		},
         async mounted(){
             let res = await cinemaListData()
             this.cinema = res.data.data.cinemas
             let ree = await cinemaYouData()
-            this.cinemaQ = ree.data.data
-// if(navigator.geolocation){
-//   navigator.geolocation.getCurrentPosition(onSuccess , onError);
-// }else{
-//   alert("您的浏览器不支持使用HTML 5来获取地理位置服务");
-// }
-// //定位数据获取成功响应
-// function  onSuccess(position){
-//       alert('纬度: '          + position.coords.latitude          + '\n' +
-//       '经度: '         + position.coords.longitude         + '\n' +
-//       '海拔: '          + position.coords.altitude          + '\n' +
-//       '水平精度: '          + position.coords.accuracy          + '\n' +
-//       '垂直精度: ' + position.coords.altitudeAccura)
-// }
-// //定位数据获取失败响应
-// function onError(error) {
-//   switch(error.code)
-//   {
-//     case error.PERMISSION_DENIED:
-//     alert("您拒绝对获取地理位置的请求");
-//     break;
-//     case error.POSITION_UNAVAILABLE:
-//     alert("位置信息是不可用的");
-//     break;
-//     case error.TIMEOUT:
-//     alert("请求您的地理位置超时");
-//     break;
-//     case error.UNKNOWN_ERROR:
-//     alert("未知错误");
-//     break;
-//   }
-// }
-// console.log(navigator.geolocation);
-// console.log(navigator.geolocation.getCurrentPosition(onSuccess, onError));
+			this.cinemaQ = ree.data.data
+		
+			var _this = this;
+			if(this.city == '火星' || this.city == undefined){
+				setdir()
+			}
+			function setdir(){
+				if(navigator.geolocation){
+				let q = navigator.geolocation.getCurrentPosition(onSuccess , onError);
+			}
+			}
+					//定位数据获取成功响应
+			function onSuccess(position){
+     			 	let wei = position.coords.latitude 
+					let jing = position.coords.longitude
+					axios.get(`https://api.i-lynn.cn/poi?location=${jing},${wei}`).then((ret)=>{
+						var addr = ret.data.regeocode.addressComponent.province
+						var newAddr = addr.substr(0,2)
+						_this.$store.commit('setCity',newAddr)
+						_this.$store.commit('getAddr' , newAddr)
+					})
+			}
+			//定位数据获取失败响应
+			function onError(error) {
+  				switch(error.code)
+  			{
+    			case error.PERMISSION_DENIED:
+    			alert("您拒绝对获取地理位置的请求");
+    			break;
+    			case error.POSITION_UNAVAILABLE:
+    			alert("位置信息是不可用的");
+    			break;
+    			case error.TIMEOUT:
+    			alert("请求您的地理位置超时");
+    			break;
+    			case error.UNKNOWN_ERROR:
+    			alert("未知错误");
+    			break;
+  			}
+		}
+			
+
+			this.height = document.documentElement.clientHeight -145
       },
       filters:{
           money1:(value)=>{
@@ -201,7 +228,22 @@
                 
                 return b
           }
-      }
+	  },
+	  computed:{
+        ...mapState(['city','addr'])
+	},
+	methods:{
+		...mapMutations(['setCity']),
+		toWhere:function(){
+			this.$router.push({path:'/city',parmas:this.city})
+		}
+	},
+	updated(){
+        this.bs = new BScroll('.scroll' , {
+            click: true
+		});
+	
+	}
     }
 </script>
 
@@ -209,6 +251,7 @@
 a{
     text-decoration: none;
 }
+
 header {
 	position: fixed;
 	top: 0;
@@ -224,7 +267,9 @@ header {
 	display: -webkit-box;
 	display: -ms-flexbox;
 	display: flex;
-
+	.scroll{
+	overflow: hidden;
+}
 	.left {
 		min-width: 15%;
 		display: -webkit-box;
@@ -324,12 +369,16 @@ header img {
 .cinema-layer {
 	padding-top: 94px;
 }
-.cinema-banner-wrap .cinema-list {
+.cinema-list {
 	border-top: 1px solid #888888;
 
 	list-style: none;
 	padding: 0;
 	margin: 0;
+
+	.scroll{
+		overflow: hidden;
+	}
 	.cinema-banner-item {
 		padding: 15px;
 		position: relative;

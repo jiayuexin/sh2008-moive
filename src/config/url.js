@@ -12,3 +12,7 @@ export const detailUrl = "gateway?k=3768245&&filmId="
 export const cinemaListUrl = 'gateway?cityId=310100&ticketFlag=1&k=6599323'
 
 export const cinemaYou = 'gateway?cityId=310100&k=7471974'
+
+
+// 城市列表数据
+export const cityListUrl = 'gateway?&k=7471974'
