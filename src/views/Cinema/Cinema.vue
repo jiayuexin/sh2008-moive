@@ -79,6 +79,7 @@
 			</div>
 		</div>
 		<!-- <van-loading type="spinner" size="1000px" color="red" /> -->
+		<Loading v-if="loading"></Loading>
 		<div class="cinema-layer"></div>
 		<div class="scroll" :style="{height:height + 'px'}">
 			<div>
@@ -152,10 +153,8 @@
 	import {mapState , mapMutations} from 'vuex'
 	import axios from 'axios'
 	import BScroll from 'better-scroll'
-	import Vue from 'vue';
-	import { Loading } from 'vant';
-
-	Vue.use(Loading);
+	import Loading from '@/components/loading'
+	
 
     export default {
         data:function(){
@@ -164,25 +163,33 @@
 				cinemaQ:[],
 				height:0,
 				bs:null,
-				citt:''
+				citt:'',
+				loading:true
                 }
+		},
+		created(){
+			if(this.cinema.length > 0){
+				this.loading = false
+			}
 		},
         async mounted(){
             let res = await cinemaListData()
-            this.cinema = res.data.data.cinemas
-            let ree = await cinemaYouData()
-			this.cinemaQ = ree.data.data
-			if(this.city == undefined){
-				let a = JSON.parse(localStorage.getItem('name'))
-				this.citt = a
-			}
+				this.cinema = res.data.data.cinemas
+
+				let ree = await cinemaYouData()
+				this.cinemaQ = ree.data.data
+
+				if(this.city == undefined){
+					let a = JSON.parse(localStorage.getItem('name'))
+					this.citt = a
+				}
 			var _this = this;
 			if(this.city == '火星'){
 				setdir()
 			}
 			function setdir(){
 				if(navigator.geolocation){
-				let q = navigator.geolocation.getCurrentPosition(onSuccess , onError);
+				let q = navigator.geolocation.getCurrentPosition(onSuccess);
 			}
 			}
 					//定位数据获取成功响应
@@ -198,23 +205,7 @@
 					})
 			}
 			//定位数据获取失败响应
-			function onError(error) {
-  				switch(error.code)
-  			{
-    			case error.PERMISSION_DENIED:
-    			alert("您拒绝对获取地理位置的请求");
-    			break;
-    			case error.POSITION_UNAVAILABLE:
-    			alert("位置信息是不可用的");
-    			break;
-    			case error.TIMEOUT:
-    			alert("请求您的地理位置超时");
-    			break;
-    			case error.UNKNOWN_ERROR:
-    			alert("未知错误");
-    			break;
-  			}
-		}
+			
 			
 
 			this.height = document.documentElement.clientHeight -145
@@ -236,6 +227,9 @@
 	  computed:{
         ...mapState(['city','addr'])
 	},
+	components:{
+		Loading
+	},
 	methods:{
 		...mapMutations(['setCity']),
 		toWhere:function(){
@@ -255,7 +249,9 @@
 a{
     text-decoration: none;
 }
-
+	.scroll{
+	overflow: hidden;
+}
 header {
 	position: fixed;
 	top: 0;
@@ -271,9 +267,7 @@ header {
 	display: -webkit-box;
 	display: -ms-flexbox;
 	display: flex;
-	.scroll{
-	overflow: hidden;
-}
+
 	.left {
 		min-width: 15%;
 		display: -webkit-box;

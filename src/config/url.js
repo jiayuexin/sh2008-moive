@@ -20,5 +20,5 @@ export const cinemaYou = 'gateway?cityId=310100&k=7471974'
 export const cityListUrl = 'gateway?&k=7471974'
 
 // 个人中心相关的接口
-export const loginUrl = "http://127.0.0.1:3000/api/v1/login";
-export const centerUrl = "http://127.0.0.1:3000/api/v1/user_info"
+export const loginUrl = "http://39.104.79.96:3000/api/v1/login";
+export const centerUrl = "http://39.104.79.96:3000/api/v1/user_info"

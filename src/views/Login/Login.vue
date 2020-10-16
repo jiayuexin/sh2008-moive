@@ -98,7 +98,7 @@ export default {
                     if(ret.data.code == 1000){
                       // 登录成功(存储token值，然后条状页面)
                       this.$store.commit('updateToken',ret.data.data._token)
-                      this.$router.push({path:'/center'})
+                      
                       if(this.$route.query.refer){
                           this.$router.push({path:encodeURI(this.$route.query.refer)})
                       }else{

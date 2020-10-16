@@ -151,16 +151,16 @@ export default {
         let _token = this.$store.state._token
         if(_token){
             let ret = await userInfo(_token)
+            console.log(ret);
             this.userInfo = ret.data.user_info
         }
-        let we = parseInt(new Date().getTime() / 1000)
-        if((we - this.userInfo.verify)>10){
-            localStorage.removeItem('_token')
-            alert('sd')
+        if(this.userInfo.timeBool == false){
+            localStorage.setItem('_token' , '')
+            this.$router.go(0)
         }
-        
-        // if(!localStorage.getItem('_token')){
-        //     alert('token已失效')
+        // if((we - this.userInfo.verify)>10 || this.userInfo.verify == undefined){
+        //     localStorage.removeItem('_token')
+        //     alert('sd')
         // }
     },
     methods: {

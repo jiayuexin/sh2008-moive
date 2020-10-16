@@ -56,27 +56,27 @@ const Model = mongoose.model("User", UserSchema, "users");
 
 // 获取.env文件中的secret
 const jwt_secret = fs.readFileSync(path.join(__dirname, '.env'), 'utf-8');
-let verify = ''
-    // 中间件：验证客户端发送过来token
+// let verify = ''
+// 中间件：验证客户端发送过来token
+var timeBool = ''
 const checkToken = async function(req, res, next) {
     let temArr = (req.headers.authorization).split(' ')
     let _token = temArr[temArr.length - 1]
         // 验证是否合法
     try {
-        verify = jwt.verify(_token, jwt_secret)
+        let verify = jwt.verify(_token, jwt_secret)
             // 二次验证为了安全
-            // console.log(_token);
-            // console.log(jwt_secret);
-            // console.log(verify);
             // 判断时间戳是否超过自己所设置的事件
-            // let nowDate = parseInt(new Date().getTime() / 1000)
+        let time = parseInt(new Date().getTime() / 1000)
 
-        // console.log(nowDate);
-        // console.log(verify.iat);
-        // if (((nowDate - verify.iat) > 10)) {
-        //     console.log(1232);
-        // }
+        if ((time - verify.iat) > 10) {
+            timeBool = false
+        } else {
+            timeBool = true
+        }
+
         let data = await Model.findOne({ userId: verify.userId })
+        console.log(data);
         if (data) {
             // 合法用户
             req.body.user_id = data.userId
@@ -110,7 +110,7 @@ app.get('/api/v1/user_info', checkToken, async(req, res) => {
             gender,
             mobile: mobile.substr(0, 7) + '****',
             headIcon,
-            verify: verify.iat,
+            timeBool
         }
     })
 })
@@ -141,7 +141,6 @@ app.post('/api/v1/login', passwdCrypt, async(req, res) => {
             info: 'login success',
             data: {
                 _token: jwt.sign({
-                    exp: parseInt(Date.now() / 1000) + 10,
                     // 存放在载荷中的数据
                     userId: result.userId,
                     mobile: result.mobile.substr(0, 7) + '****'
