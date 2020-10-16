@@ -14,39 +14,44 @@ import {
     cinemaListUrl,
     cinemaYou,
     cityListUrl,
-    loginUrl
+    loginUrl,
+    centerUrl
 } from '@/config/url'
 
 // 请求正在热映
 export const nowPlayingListData = (page) => {
+    http.defaults.headers.authorization = ""
     http.defaults.headers.info = ""
     return http.get(nowPlayingListUrl + page)
 }
 export const comingSoonListData = (page) => {
+    http.defaults.headers.authorization = ""
     http.defaults.headers.info = ""
-
     return http.get(comingSoonListUrl + page)
 }
 
 export const detailData = (filmId) => {
+    http.defaults.headers.authorization = ""
     http.defaults.headers.info = "info"
     return http.get(detailUrl + filmId)
 }
 
 // 电影院列表
 export const cinemaListData = () => {
+    http.defaults.headers.authorization = ""
     http.defaults.headers.info = "cinema"
     return http.get(cinemaListUrl)
 }
 export const cinemaYouData = () => {
+    http.defaults.headers.authorization = ""
     http.defaults.headers.info = "banners"
     return http.get(cinemaYou)
 }
 
 
 export const cityListData = async() => {
-
-    // 给axios 设置请求头
+    http.defaults.headers.authorization = ""
+        // 给axios 设置请求头
     http.defaults.headers.info = "city"
     let ret = await http.get(cityListUrl)
         // 定义基本的数据
@@ -77,3 +82,21 @@ export const cityListData = async() => {
 
     return Promise.resolve([dataList, indexList])
 };
+
+// 登录
+export const userLogin = (data) => {
+    return http.post(loginUrl, data)
+}
+
+// 获取用户信息
+export const userInfo = (_token) => {
+    http.defaults.headers.authorization = _token;
+
+    // http.interceptors.response.use(function(response) {
+    //     response.data.user_info.gender = response.data.user_info.gender ? '女' : '男'
+    //     return response
+    // }, function(error) {
+    //     // 错误处理
+    // })
+    return http.get(centerUrl)
+}

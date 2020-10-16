@@ -1,121 +1,163 @@
 <template>
-  <div>
-    <div class="web-login">
-      <div class="logo">
-        <img
-          src="https://assets.maizuo.com/h5/mz-auth/public/app/img/logo.19ca0be.png"
-        />
-      </div>
-      <div class="login-form">
-        <div>
-          <form>
-            <div class="form-group">
-              <input
-                type="tel"
-                maxlength="13"
-                placeholder="手机号"
-                class="input-control"
-              />
-              <div
-                class="getSmsCode sms-code disable"
-                style="position: absolute; right: 0px; top: 0px;"
-              >
-                获取验证码
-              </div>
+    <div class="login">
+        <el-container>
+            <div class="logo">
+                <img
+                    src="https://assets.maizuo.com/h5/mz-auth/public/app/img/logo.19ca0be.png"
+                />
             </div>
-            <div class="errorTip" style="display: none;"></div>
-            <!---->
-            <div class="errorTip" style="display: none;"></div>
-            <div class="form-group">
-              <input placeholder="验证码" class="input-control" />
-            </div>
-            <!---->
-            <!---->
-            <div class="submit login-btn"><span>登录</span></div>
-          </form>
-          <!---->
-        </div>
-      </div>
+            <el-main>
+                <!-- 表单 -->
+                <el-form :rules="rules" :model="formData" ref="formData">
+                    <el-form-item label="手机号" prop="mobile">
+                        <el-input
+                            placeholder="请输入手机号"
+                            v-model="formData.mobile"
+                            maxlength="11"
+                        ></el-input>
+                    </el-form-item>
+                    <el-form-item label="密码" prop="password">
+                        <el-input
+                            type="password"
+                            v-model="formData.password"
+                            placeholder="请输入密码"
+                            show-password
+                        ></el-input>
+                    </el-form-item>
+                    <el-form-item>
+                        <el-button
+                            type="primary"
+                            @click="submitForm('formData')"
+                            >登 录</el-button
+                        >
+                    </el-form-item>
+                </el-form>
+            </el-main>
+            <el-footer style="height:20px">
+                <div @click="back">返回首页</div>
+                &copy;2020 SH-HTML5-2008
+            </el-footer>
+        </el-container>
     </div>
-  </div>
 </template>
-<style lang="scss">
-.disable {
-  color: #bdc0c5;
-}
-.web-login {
-  font-size: 15px;
-  .logo {
-    margin: 79px auto 40px;
-    text-align: center;
-    height: 60px;
-    line-height: 60px;
-    img {
-      height: 60px;
-    }
-  }
-  .login-form {
-    width: 100%;
-    position: relative;
-    .submit {
-      line-height: 45px;
-      font-size: 16px;
-      margin: 70px 25px 0;
-      border-radius: 3px;
-      text-align: center;
-      background-color: #ff5f16;
-      height: 44px;
-      color: #fff;
-      border: none;
-    }
-    .getSmsCode {
-      font-size: 13px;
-    }
-    .form-group {
-      line-height: 55px;
-      margin: 0 25px;
-      position: relative;
-      border-bottom: 1px solid #ededed;
-      .input-control {
-        height: 15px;
-        line-height: 15px;
-        padding: 20px 0;
-        width: 100%;
-        font-size: 15px;
-        color: #191a1b;
-        border: 0;
-        outline-width: 0;
-      }
-    }
-    .errorTip {
-      text-align: left;
-      color: #ff5f16;
-      width: 100%;
-      line-height: 11px;
-      margin-left: 25px;
-      font-size: 11px;
-      margin-top: 7px;
-    }
-  }
-}
-</style>
+
 <script>
+import {userLogin} from '@/api/api'
+import {mapState} from 'vuex'
 export default {
-  data() {
-    return {
-      dataList: [],
-      indexList: [],
-      height: 0,
-      bs: null,
-    };
-  },
-  //进入去掉底部道航
-  created() {
-    this.eventBus.$emit("footernav", false);
-  },
-  //出来的时候显示道航
-  beforDestroy() {
-    this.eventBus.$emit("footernav", true);
-  },
+    data() {
+        return {
+            formData: {
+                mobile: '',
+                password: '',
+            },
+            rules: {
+                mobile: [
+                    {
+                        required: true,
+                        message: '请输入手机号',
+                        trigger: 'blur',
+                    },
+                    {
+                        pattern: /^1[3-9]\d{9}$/,
+                        message: '手机格式不正确',
+                        trigger: 'blur',
+                    },
+                ],
+                password: [
+                    {
+                        required: true,
+                        message: '请输入密码',
+                        trigger: 'blur',
+                    },
+                    {
+                        min: 6,
+                        max: 20,
+                        message: '长度在 6 到 20 个字符',
+                        trigger: 'blur',
+                    },
+                ],
+            },
+        };
+    },
+    created() {
+        this.eventBus.$emit('footernav', false);
+    },
+    beforeDestroy() {
+        this.eventBus.$emit('footernav', true);
+    },
+    computed:{
+      ...mapState(['_token'])
+    },
+    methods: {
+        submitForm: function(formName) {
+            this.$refs[formName].validate( async valid => {
+                if (valid) {
+                    // 获取用户名和密码进行提交（API）
+                    let ret = await userLogin(this.formData)
+                    if(ret.data.code == 1000){
+                      // 登录成功(存储token值，然后条状页面)
+                      this.$store.commit('updateToken',ret.data.data._token)
+                      this.$router.push({path:'/center'})
+                      if(this.$route.query.refer){
+                          this.$router.push({path:encodeURI(this.$route.query.refer)})
+                      }else{
+                          this.$router.push({path:"/center"})
+                      }
+                    }else{
+                      // 登录失败
+                      alert(ret.data.info)
+                    }
+                }
+            });
+        },
+        back:function(){
+          this.$router.push({path:'/film'})
+        }
+    },
 };
 </script>
+
+<style lang="scss" scoped>
+.login {
+    .logo {
+        margin: 79px auto 40px;
+        text-align: center;
+        height: 60px;
+        line-height: 60px;
+
+        img {
+            height: 60px;
+        }
+    }
+
+    .el-container {
+        width: 80%;
+        margin-left: 40px;
+
+        .el-form {
+            .el-button {
+                font-size: 16px;
+                margin: 70px 0 70px 0;
+                border-radius: 7px;
+                text-align: center;
+                background-color: #ff5f16;
+                width: 100%;
+                height: 44px;
+                color: #fff;
+                border: none;
+            }
+        }
+
+        .el-header {
+            font-size: 23px;
+        }
+
+        .el-footer {
+            font-size: 10px;
+            color: #939497;
+            text-align: center;
+        }
+    }
+}
+</style>

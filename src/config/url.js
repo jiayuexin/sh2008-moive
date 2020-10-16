@@ -1,3 +1,5 @@
+import { Container } from "element-ui"
+
 // 电影列表
 export const nowPlayingListUrl = "gateway?cityId=310100&pageSize=10&type=1&k=5155219&pageNum="
 
@@ -16,3 +18,7 @@ export const cinemaYou = 'gateway?cityId=310100&k=7471974'
 
 // 城市列表数据
 export const cityListUrl = 'gateway?&k=7471974'
+
+// 个人中心相关的接口
+export const loginUrl = "http://127.0.0.1:3000/api/v1/login";
+export const centerUrl = "http://127.0.0.1:3000/api/v1/user_info"

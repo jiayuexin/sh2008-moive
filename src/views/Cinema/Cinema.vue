@@ -9,7 +9,7 @@
 					data-enter-time="1602496952"
 					data-click-fun="track_f_798828"
 				>
-					<span @click="toWhere()">{{city}}</span>
+					<span @click="toWhere()">{{city || citt}}</span>
 
 					<img
 						src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAAJCAMAAAAIAYw9AAAAOVBMVEVHcEwZGhsZGxsZGhskJCQaGhwbGxsZHR0ZGhsZGhsZGhsZGhsZHBwaGhsaGhwZGxsaGh0bGxsZGhsAwt9XAAAAEnRSTlMA5Z7pB2scPfrK6NJskn6fcnH7htMrAAAAVElEQVQI11XNOQKAIBAEwQEXl0NQ+/+PNfDucIIabaGbnqyHXQHKfC9zgaABVD8Xr8CQlgw5SVLKkBdJ8gmIZhGY/BUoha9qKwDEz/fJJP3y1i5GB2jVA/F2X5USAAAAAElFTkSuQmCC"
@@ -172,9 +172,12 @@
             this.cinema = res.data.data.cinemas
             let ree = await cinemaYouData()
 			this.cinemaQ = ree.data.data
-		
+			if(this.city == undefined){
+				let a = JSON.parse(localStorage.getItem('name'))
+				this.citt = a
+			}
 			var _this = this;
-			if(this.city == '火星' || this.city == undefined){
+			if(this.city == '火星'){
 				setdir()
 			}
 			function setdir(){
@@ -191,6 +194,7 @@
 						var newAddr = addr.substr(0,2)
 						_this.$store.commit('setCity',newAddr)
 						_this.$store.commit('getAddr' , newAddr)
+						localStorage.setItem('name' , JSON.stringify(newAddr))
 					})
 			}
 			//定位数据获取失败响应

@@ -8,7 +8,8 @@ export default new Vuex.Store({
         count: 0,
         city: '火星',
         addr: '定位失败',
-        cityOld: ''
+        cityOld: '',
+        _token: ''
     },
     // 存储修改的方法    （不能写异步代码）
     mutations: {
@@ -21,6 +22,10 @@ export default new Vuex.Store({
         getAddr: function(state, addrName) {
             state.addr = addrName
             state.cityOld = addrName
+        },
+        updateToken: function(state, _token) {
+            state._token = _token
+            localStorage.setItem('_token', _token)
         }
     },
     // 存储修改的方法   （可以写异步）
