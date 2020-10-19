@@ -11,13 +11,19 @@ axios.defaults.baseURL = "https://m.maizuo.com/"
 axios.interceptors.request.use(
     function(config) {
         let host = '';
+
         let info = config.headers.info;
-        if (info == 'city') {
+        if (info == 'cinemaxp') {
+            host = 'mall.film-ticket.cinema.info'
+        } else if (info == 'cinemaListXp') {
+            host = 'mall.film-ticket.film.cinema-show-film'
+        } else if (info == 'city') {
             host = 'mall.film-ticket.city.list'
         } else if ("banners" == info) {
             host = 'mall.cfg.cinema.banners'
         } else if ("cinema" == info) {
             // 影院列表的头
+
             host = 'mall.film-ticket.cinema.list'
         } else if ("info" == info) {
             host = 'mall.film-ticket.film.info'
@@ -32,6 +38,7 @@ axios.interceptors.request.use(
             config.headers = {
                 "X-Client-Info": '{"a":"3000","ch":"1002","v":"5.0.4","e":"1602226855365231133949961","bc":"310100"}',
                 "X-Host": host,
+
             }
         }
         return config

@@ -1,42 +1,56 @@
-import Vue from 'vue'
-import Vuex from 'vuex'
-Vue.use(Vuex)
-export default new Vuex.Store({
+// 引入vue和vuex
+import Vue from 'vue';
+import Vuex from 'vuex';
 
-    // state中存放的就是全局共享的数据
+// 在vue中使用vuex
+Vue.use(Vuex);
+
+// 创建Store对象，用于存储数据
+export default new Vuex.Store({
     state: {
         count: 0,
-        city: '火星',
-        addr: '定位失败',
-        cityOld: '',
-        _token: ''
+        city: '全国',
+        positionCity: '定位失败',
+        // 如果有更多的数据需要存储，接着写就行
+        _token: '',
+
     },
-    // 存储修改的方法    （不能写异步代码）
+    // 修改数据（监听），同步程序放这里
     mutations: {
         add: function(state, step) {
-            state.count += step
+            state.count += step;
         },
         setCity: function(state, cityName) {
-            state.city = cityName
-        },
-        getAddr: function(state, addrName) {
-            state.addr = addrName
-            state.cityOld = addrName
+            localStorage.setItem('clickName', cityName);
+            state.city = cityName;
         },
         updateToken: function(state, _token) {
-            state._token = _token
-            localStorage.setItem('_token', _token)
-        }
+            localStorage.setItem('_token', _token);
+            state._token = _token;
+        },
+        getCityName: function(state, positionName) {
+            state.positionCity = positionName;
+        },
+        getCityId: function(state, cityId) {
+            localStorage.setItem('cityId', cityId);
+        },
+        clickCityId: function(state, cityId) {
+            localStorage.setItem('clickId', cityId);
+        },
+
+        // ......
     },
-    // 存储修改的方法   （可以写异步）
+    // 异步程序放这里
     actions: {
-
+        addAsync: function(context, step) {
+            setTimeout(() => {
+                context.commit('add', step);
+            }, 3000);
+        },
     },
-    // 用于加工处理数据
     getters: {
-
-    }
-
-    //写在methods中的是  mutations   和  actions
-    // 写在computed中的是  state  和   getters
-})
+        getCount: function(state) {
+            return state.count;
+        },
+    },
+});

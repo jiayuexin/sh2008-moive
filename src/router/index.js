@@ -9,6 +9,7 @@ import detailRouter from "./routes/detail";
 import cityRouter from "./routes/city";
 import vuexRouter from "./routes/vuex";
 import loginRouter from "./routes/login";
+import cinemaDetailsRouter from './routes/cinemaDetails'
 
 const routes = [{
         path: '/',
@@ -20,7 +21,8 @@ const routes = [{
     detailRouter,
     cityRouter,
     vuexRouter,
-    loginRouter
+    loginRouter,
+    cinemaDetailsRouter
 ]
 
 const router = new VueRouter({

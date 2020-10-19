@@ -6,8 +6,21 @@ import ElementUI from 'element-ui'
 import ('element-ui/lib/theme-chalk/index.css')
 Vue.use(ElementUI)
 
+// import cors from 'cors'
+// Vue.use(cors())
 Vue.config.productionTip = false
 
+
+import  AMap  from  'vue-amap';
+Vue.use(AMap);
+// 初始化vue-amap
+AMap.initAMapApiLoader({     // 高德key
+        
+    key:   '8a0cfea2c0e101704cab4b3265e68f9b',
+         // 插件集合 （插件按需引入）
+        plugin:  ['AMap.Geolocation'],
+        v:   '1.4.4',
+});
 
 
 // 引入懒加载包
@@ -46,7 +59,9 @@ if (_token) {
 //  else {
 //     confirm('登录超时，请重新登录')
 // }
-
+import axios from 'axios'
+axios.defaults.headers.post["Content-type"] = "application/json";
+Vue.prototype.$axios = axios;
 new Vue({
     router,
     store,

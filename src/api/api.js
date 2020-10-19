@@ -15,19 +15,21 @@ import {
     cinemaYou,
     cityListUrl,
     loginUrl,
-    centerUrl
+    centerUrl,
+    cinemaUrl,
+
 } from '@/config/url'
 
 // 请求正在热映
-export const nowPlayingListData = (page) => {
+export const nowPlayingListData = (page, cityid) => {
     http.defaults.headers.authorization = ""
     http.defaults.headers.info = ""
-    return http.get(nowPlayingListUrl + page)
+    return http.get(nowPlayingListUrl + page + '&cityId=' + cityid)
 }
-export const comingSoonListData = (page) => {
+export const comingSoonListData = (page, cityid) => {
     http.defaults.headers.authorization = ""
     http.defaults.headers.info = ""
-    return http.get(comingSoonListUrl + page)
+    return http.get(comingSoonListUrl + page + '&cityId=' + cityid)
 }
 
 export const detailData = (filmId) => {
@@ -37,15 +39,15 @@ export const detailData = (filmId) => {
 }
 
 // 电影院列表
-export const cinemaListData = () => {
+export const cinemaListData = (ID) => {
     http.defaults.headers.authorization = ""
     http.defaults.headers.info = "cinema"
-    return http.get(cinemaListUrl)
+    return http.get(cinemaListUrl + ID)
 }
-export const cinemaYouData = () => {
+export const cinemaTopData = (ID) => {
     http.defaults.headers.authorization = ""
     http.defaults.headers.info = "banners"
-    return http.get(cinemaYou)
+    return http.get(cinemaYou + ID)
 }
 
 
@@ -99,4 +101,20 @@ export const userInfo = (_token) => {
     //     // 错误处理
     // })
     return http.get(centerUrl)
+}
+
+//影院详情
+
+// 电影院详情
+export const cinemaXP = (id) => {
+    http.defaults.headers.info = "cinemaxp"
+    http.defaults.headers.authorization = ""
+    return http.get(cinemaUrl + id)
+}
+
+// 电影院电影详情
+export const cinemaListXp = (id) => {
+    http.defaults.headers.info = "cinemaListXp"
+    http.defaults.headers.authorization = ""
+    return http.get(cinemaUrl + id)
 }
