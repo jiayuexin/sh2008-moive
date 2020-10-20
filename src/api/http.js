@@ -13,7 +13,9 @@ axios.interceptors.request.use(
         let host = '';
 
         let info = config.headers.info;
-        if (info == 'cinemaxp') {
+        if (info == 'cinemaFData') {
+            host = 'mall.film-ticket.schedule.list'
+        } else if (info == 'cinemaxp') {
             host = 'mall.film-ticket.cinema.info'
         } else if (info == 'cinemaListXp') {
             host = 'mall.film-ticket.film.cinema-show-film'

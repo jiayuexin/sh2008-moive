@@ -8,12 +8,7 @@
                         width="11px"
                         height="18px"
                         style=""
-                    />
-                    <img
-                        src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADkAAAA5CAMAAAC7xnO3AAAAQlBMVEVHcEwZGxsfHx8ZGhsZHh4ZGhsZHx////8aGhsZGhsbGxsaGhwcHBwYGRoZGhwaGhsaGh0aGh4bGxsZGhwZGhwZGhuZ90I0AAAAFXRSTlMAnRDlO/MoAZznQYY1+qvEVjpx0NGKQfLiAAAA8klEQVRIx+3WSQ6DMAwFUIbSUKAMbXP/q5apAoMdf0di1ywtniwF+0OS/M/F55XXDnpweHcZKeTelwi9Fd73pFJ7iE7wQXu6EqEzvB+KCGUhQgWoUxFqNADDNAhDVIEyVaFEAchTCHIUhGcKwyM1QEpNcE+NcKNm+KMRcKXPCLjSGDheztjRty4CFlNPLBHPs9pG0OVWsURkt8NMt/dopPsBMFE6OQZ6HDmYnmcVpNyQQ5TfDoBKa6VSeR8VGlrkmaYu4muVuFSkWnSIVM8cgSJhxdIBSrmF0toHC6uZVqTUgSk30YZUsj4Dl7dq/n/Jl58vF/caAGebDs0AAAAASUVORK5CYII="
-                        width="19px"
-                        height="19px"
-                        style="display: none;"
+                        @click="back"
                     />
                 </div>
                 <div class="header-title">
@@ -82,7 +77,10 @@
                                         v-for="(item, index) in cinemaDetail"
                                         :key="index"
                                     >
-                                        <div class="film-item">
+                                        <div
+                                            class="film-item"
+                                            @click="film(item.filmId)"
+                                        >
                                             <div class="img-wrap">
                                                 <img
                                                     :src="item.poster"
@@ -99,8 +97,11 @@
                                 ></span>
                             </div>
                         </div>
-                        <cinemaMiddle></cinemaMiddle>
-                        <time1></time1>
+                        <cinemaMiddle
+                            :film="filmId"
+                            :filmData="cinemaDetail1"
+                        ></cinemaMiddle>
+                        <time1 :showD="cinemaDetail" :film="filmId"></time1>
                         <period1></period1>
                         <!-- <div class="schedule-list">
                             <div>
@@ -297,39 +298,68 @@
 </template>
 
 <script>
-import { cinemaListXp, cinemaXP } from "@/api/api";
+import { cinemaListXp, cinemaXP, cinemaFData } from "@/api/api";
 import cinemaMiddle from "@/components/cinemaMiddle";
 import time1 from "@/components/time";
 import period1 from "@/components/period";
 import Swiper from "swiper";
 import "swiper/swiper-bundle.min.css";
+import moment from "moment";
+moment.locale("zh-cn");
 export default {
     data() {
         return {
             cinemaPic: [],
             cinemaDetail: [],
             detailTop: [],
+            filmId: "",
+            room: [],
+            cinemaDetail1: [],
         };
+    },
+    methods: {
+        film: function(Id) {
+            this.filmId = Id;
+        },
+        back: function() {
+            this.$router.go(-1);
+        },
+    },
+    watch: {
+        cinemaDetail: function(newx, oldx) {
+            this.cinemaDetail1 = newx;
+        },
     },
     components: { cinemaMiddle, time1, period1 },
     async mounted() {
-        let cinemaXp = await cinemaXP(858);
-        let cinemaListX = await cinemaListXp(858);
+        let cinemaId = localStorage.getItem("cinemaId");
+        let cinemaXp = await cinemaXP(cinemaId);
+        let cinemaListX = await cinemaListXp(cinemaId);
+        let cinemaFD = await cinemaFData();
+        // this.room = cinemaFD.data.data.schedules; // `电影院影厅信息
         this.cinemaPic = cinemaXp.data.data.cinema; // 地址
         this.cinemaDetail = cinemaListX.data.data.films; // 影片详情
+        localStorage.setItem("cinemaOne", JSON.stringify(this.cinemaDetail[0]));
         this.detailTop = this.cinemaPic.services;
-        console.log(this.cinemaPic);
-        console.log(this.cinemaDetail);
+        // 电影周几时间戳
+
         this.$nextTick(() => {
             var swiper = new Swiper(".swiper-container", {
                 slidesPerView: 4,
                 spaceBetween: 30,
                 centeredSlides: true,
+                slideToClickedSlide: true,
+                centeredSlides: true,
+                on: {
+                    touchEnd: function(swiper, event) {
+                        //你的事件
+                    },
+                },
             });
         });
     },
     // 进入的时候去掉底部导航
-    created() {
+    async beforeCreate() {
         this.eventBus.$emit("footernav", false);
     },
     // 出来的时候显示底部导航

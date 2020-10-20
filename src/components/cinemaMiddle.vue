@@ -1,26 +1,68 @@
 <template>
-    <div class="film-info">
-        <div class="film-head">
-            <span class="film-name">我和我的家乡</span>
-            <span class="film-score">7.7</span>
-            <span class="film-score-unit">分</span>
+    <div>
+        <div class="film-info">
+            <div class="film-head">
+                <span class="film-name">{{ item.name }}</span>
+
+                <span class="film-score">{{ item.grade }}</span>
+                <span class="film-score-unit">分</span>
+            </div>
+            <div class="film-desc">
+                {{ item.category }} | {{ item.runtime }}分钟 |
+                {{ item.director }} | {{ item.actors | actors }}
+            </div>
+            <img
+                src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAYCAMAAAD57OxYAAAAZlBMVEVHcEwZGhseHh4aGh8zMzMZGhsZGhwZGhsfHx8ZGhsbGxsZGhsZGxsZGxsZGxsZGxsbGxsaGhsaGh0aGh0ZGhwbGxsZGhweHh4ZGhsaGh0ZGxsZGxsZGxsZGhsZGxsZGxsaGhwZGhtuA7MxAAAAIXRSTlMA6iE5Bda99xD+OOWenXh6VddWV9BxviLpe7x5jeSBgI/e7hU0AAAAeUlEQVQY023PyRqCMAyFUSilA2VGnBX/939JN01QP7O6Z5ObFGt6FjoPuCjuEBeBvYKvRKGG8iQyZ5iCqPFwtKIxQqsre2BQdV8F7rfgoJh2WAe+yWghjjkPQJ/zHKHLufLg8jmmhDp8vGD+LH1BnKU6wU3vXdOm+Q34ngmHHMc+eAAAAABJRU5ErkJggg=="
+                width="4px"
+                height="8px"
+                alt=""
+                class="film-more"
+                @click="go(item.filmId)"
+            />
         </div>
-        <div class="film-desc">
-            剧情|喜剧 | 0分钟 | 宁浩|徐峥|陈思诚|闫非|彭安宇|邓超|俞白眉 | 闫非
-            彭安宇 宁浩 徐峥 陈思诚
-        </div>
-        <img
-            src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAYCAMAAAD57OxYAAAAZlBMVEVHcEwZGhseHh4aGh8zMzMZGhsZGhwZGhsfHx8ZGhsbGxsZGhsZGxsZGxsZGxsZGxsbGxsaGhsaGh0aGh0ZGhwbGxsZGhweHh4ZGhsaGh0ZGxsZGxsZGxsZGhsZGxsZGxsaGhwZGhtuA7MxAAAAIXRSTlMA6iE5Bda99xD+OOWenXh6VddWV9BxviLpe7x5jeSBgI/e7hU0AAAAeUlEQVQY023PyRqCMAyFUSilA2VGnBX/939JN01QP7O6Z5ObFGt6FjoPuCjuEBeBvYKvRKGG8iQyZ5iCqPFwtKIxQqsre2BQdV8F7rfgoJh2WAe+yWghjjkPQJ/zHKHLufLg8jmmhDp8vGD+LH1BnKU6wU3vXdOm+Q34ngmHHMc+eAAAAABJRU5ErkJggg=="
-            width="4px"
-            height="8px"
-            alt=""
-            class="film-more"
-        />
     </div>
 </template>
 
 <script>
-export default {};
+import { detailData } from "@/api/api";
+export default {
+    data() {
+        return {
+            id: "",
+            item: [],
+        };
+    },
+    props: ["film", "filmData"],
+    watch: {
+        film: async function(newx, oldx) {
+            let filmData = await detailData(newx);
+            this.item = filmData.data.data.film;
+        },
+        filmData: function(newData, oldData) {
+            this.item = newData[0];
+        },
+    },
+    // created() {
+    //     let a = 1603123200 * 1000;
+    //     let b = moment(a).format("ddd YYYY-MM-DD hh:mm:ss");
+    //     console.log(b);
+    // },
+
+    filters: {
+        actors: function(value) {
+            let val = "";
+            value.forEach((v, k) => {
+                val += v.name + " ";
+            });
+            return val;
+        },
+    },
+    methods: {
+        go: function(filmId) {
+            this.$router.push({ name: "detail", params: { filmId } });
+        },
+    },
+};
 </script>
 
 <style scoped>

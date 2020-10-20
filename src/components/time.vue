@@ -2,27 +2,69 @@
     <div class="date-list">
         <div class="tabs-bar-wrapper dateWrap">
             <div class="tabs-bar">
-                <ul class="tabs-nav">
-                    <li class="active" style="padding: 0px 15px;">
-                        <span>今天10月19日</span>
-                    </li>
-                    <li class="" style="padding: 0px 15px;">
-                        <span>明天10月20日</span>
-                    </li>
-                    <li class="" style="padding: 0px 15px;">
-                        <span>后天10月21日</span>
-                    </li>
-                    <div
-                        class="tab-ink-bar-wrapper"
-                        style="transform: translate3d(0%, 0px, 0px); padding: 0px 15px;"
-                    >
-                        <span class="tab-ink-bar" style="width: 89px;"></span>
-                    </div>
+                <ul
+                    class="tabs-nav"
+                    v-for="(item, index) in showDate"
+                    :key="index"
+                    v-if="item.filmId == id"
+                >
+
+                    <van-tabs v-model="active">
+                        <van-tab v-for="(v, k) in item.date" :key="k">
+                            <template #title>
+                                {{ v | week }}
+                            </template>
+                        </van-tab>
+                    </van-tabs>
                 </ul>
             </div>
         </div>
     </div>
 </template>
+
+<script>
+import moment from "moment";
+import Vue from "vue";
+import { Icon, Tab, Tabs } from "vant";
+import "vant/lib/index.css";
+Vue.use(Icon);
+Vue.use(Tab);
+Vue.use(Tabs);
+moment.locale("zh-cn");
+export default {
+    data() {
+        return {
+            showDate: [],
+            id: "",
+            active: 0,
+        };
+    },
+    props: ["showD", "film"],
+    watch: {
+        showD: function(newx, oldx) {
+            newx.forEach((v) => {
+                let date = v.showDate;
+                let filmId = v.filmId;
+                this.showDate.push({ filmId, date });
+            });
+        },
+        film: function(newx, oldx) {
+            this.id = newx;
+        },
+    },
+    filters: {
+        week: function(value) {
+            return moment(value * 1000).format("ddd MM月DD日");
+        },
+    },
+    mounted() {
+        if (this.id == "") {
+            let cinemaOne = JSON.parse(localStorage.getItem("cinemaOne"));
+            this.id = cinemaOne.filmId;
+        }
+    },
+};
+</script>
 
 <style scoped>
 .cinema-schedule .schedule-wrap .date-list {

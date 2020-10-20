@@ -238,7 +238,10 @@ export default {
         ...mapState(["city", "cityId", "positionName"]),
     },
     created() {
-        this.getLocation();
+        let a = localStorage.getItem("cityName");
+        if (a == null) {
+            this.getLocation();
+        }
     },
 };
 </script>

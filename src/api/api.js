@@ -17,7 +17,7 @@ import {
     loginUrl,
     centerUrl,
     cinemaUrl,
-
+    cinemaFUrl
 } from '@/config/url'
 
 // 请求正在热映
@@ -117,4 +117,10 @@ export const cinemaListXp = (id) => {
     http.defaults.headers.info = "cinemaListXp"
     http.defaults.headers.authorization = ""
     return http.get(cinemaUrl + id)
+}
+
+export const cinemaFData = () => {
+    http.defaults.headers.info = "cinemaFData"
+    http.defaults.headers.authorization = ""
+    return http.get(cinemaFUrl)
 }

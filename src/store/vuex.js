@@ -13,7 +13,7 @@ export default new Vuex.Store({
         positionCity: '定位失败',
         // 如果有更多的数据需要存储，接着写就行
         _token: '',
-
+        ID: ''
     },
     // 修改数据（监听），同步程序放这里
     mutations: {
@@ -37,6 +37,12 @@ export default new Vuex.Store({
         clickCityId: function(state, cityId) {
             localStorage.setItem('clickId', cityId);
         },
+        // 电影详情    电影院的
+        filmID: function(state, ID) {
+            state.ID = ID
+        }
+
+
 
         // ......
     },

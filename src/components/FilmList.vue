@@ -113,9 +113,7 @@ export default {
                 }
 
                 // 如果当前请求到的数据数量少于10则说明后面已经没有数据可以请求了。此时需要把开关设置成false
-                if (ret.data.data.films.length < 10) {
-                    this.bool = false;
-                }
+                 
                 // 将数据处理好新增到列表中
                 this.data = this.data.concat(ret.data.data.films);
             }
