@@ -119,8 +119,8 @@ export const cinemaListXp = (id) => {
     return http.get(cinemaUrl + id)
 }
 
-export const cinemaFData = () => {
+export const cinemaFData = (cinemaID, filmId, showDate) => {
     http.defaults.headers.info = "cinemaFData"
     http.defaults.headers.authorization = ""
-    return http.get(cinemaFUrl)
+    return http.get(cinemaFUrl + cinemaID + '&filmId=' + filmId + '&date=' + showDate)
 }

@@ -25,7 +25,6 @@ axios.interceptors.request.use(
             host = 'mall.cfg.cinema.banners'
         } else if ("cinema" == info) {
             // 影院列表的头
-
             host = 'mall.film-ticket.cinema.list'
         } else if ("info" == info) {
             host = 'mall.film-ticket.film.info'

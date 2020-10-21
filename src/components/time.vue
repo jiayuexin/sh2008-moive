@@ -8,9 +8,8 @@
                     :key="index"
                     v-if="item.filmId == id"
                 >
-
-                    <van-tabs v-model="active">
-                        <van-tab v-for="(v, k) in item.date" :key="k">
+                    <van-tabs v-model="active" @click="onClick($event)">
+                        <van-tab v-for="(v, k) in item.date" :key="k" :name="v">
                             <template #title>
                                 {{ v | week }}
                             </template>
@@ -19,6 +18,7 @@
                 </ul>
             </div>
         </div>
+        <period :timer="shijian" :film="film" :schedules="schedules"></period>
     </div>
 </template>
 
@@ -31,15 +31,19 @@ Vue.use(Icon);
 Vue.use(Tab);
 Vue.use(Tabs);
 moment.locale("zh-cn");
+import period from "@/components/period";
 export default {
     data() {
         return {
             showDate: [],
             id: "",
             active: 0,
+            data: "",
+            shijian: "",
         };
     },
-    props: ["showD", "film"],
+    props: ["showD", "film", "schedules"],
+
     watch: {
         showD: function(newx, oldx) {
             newx.forEach((v) => {
@@ -47,21 +51,31 @@ export default {
                 let filmId = v.filmId;
                 this.showDate.push({ filmId, date });
             });
+            if (this.id == "") {
+                this.id = newx[0].filmId;
+            }
+            let getTime = localStorage.getItem("time");
+            if (getTime == null) {
+                localStorage.setItem("time", newx[0].showDate[0]);
+            }
         },
         film: function(newx, oldx) {
             this.id = newx;
         },
     },
+
     filters: {
         week: function(value) {
             return moment(value * 1000).format("ddd MM月DD日");
         },
     },
-    mounted() {
-        if (this.id == "") {
-            let cinemaOne = JSON.parse(localStorage.getItem("cinemaOne"));
-            this.id = cinemaOne.filmId;
-        }
+    methods: {
+        onClick: function(event) {
+            this.shijian = event;
+        },
+    },
+    components: {
+        period,
     },
 };
 </script>

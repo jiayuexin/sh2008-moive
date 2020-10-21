@@ -23,7 +23,7 @@ export const cityListUrl = 'gateway?&k=7471974'
 export const cinemaUrl = 'gateway/?k=9363061&cinemaId='
 
 // 电影院房间
-export const cinemaFUrl = 'gateway/?filmId=5200&cinemaId=1000&date=1603382400&k=2809501'
+export const cinemaFUrl = 'gateway/?k=2809501&cinemaId='
 
 
 

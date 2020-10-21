@@ -2,139 +2,87 @@
     <!--场次  -->
     <div class="schedule-list">
         <div>
-            <div class="disable schedule-item">
+            <div
+                class="disable schedule-item"
+                v-for="(item, index) in sched"
+                :key="index"
+            >
                 <div class="left">
                     <div class="start-at">
-                        15:55
+                        {{ item.showAt | week }}
                     </div>
-                    <div class="end-at">
-                        18:28散场
-                    </div>
+                    <div class="end-at">{{ item.endAt | week }}散场</div>
                 </div>
                 <div class="middle">
                     <div class="language">
-                        国语2D
+                        {{ item.filmLanguage }}{{ item.imagery }}
                     </div>
                     <div class="hall">
-                        6号厅
+                        {{ item.hallName }}
                     </div>
                 </div>
                 <div class="right">
-                    <div class="buy-ticket">
+                    <div class="buy-ticket" v-if="item.isOnsell == true">
+                        购票
+                    </div>
+                    <div class="buy-ticket" v-else>
                         停售
                     </div>
                     <div class="lowest-price">
-                        <span class="price-icon">￥</span>43
-                    </div>
-                </div>
-            </div>
-            <div class="schedule-item">
-                <div class="left">
-                    <div class="start-at">
-                        18:00
-                    </div>
-                    <div class="end-at">
-                        20:33散场
-                    </div>
-                </div>
-                <div class="middle">
-                    <div class="language">
-                        国语2D
-                    </div>
-                    <div class="hall">
-                        7号VIP厅
-                    </div>
-                </div>
-                <div class="right">
-                    <div class="buy-ticket">
-                        购票
-                    </div>
-                    <div class="lowest-price">
-                        <span class="price-icon">￥</span>88
-                    </div>
-                </div>
-            </div>
-            <div class="schedule-item">
-                <div class="left">
-                    <div class="start-at">
-                        19:00
-                    </div>
-                    <div class="end-at">
-                        21:33散场
-                    </div>
-                </div>
-                <div class="middle">
-                    <div class="language">
-                        国语2D
-                    </div>
-                    <div class="hall">
-                        6号厅
-                    </div>
-                </div>
-                <div class="right">
-                    <div class="buy-ticket">
-                        购票
-                    </div>
-                    <div class="lowest-price">
-                        <span class="price-icon">￥</span>53
-                    </div>
-                </div>
-            </div>
-            <div class="schedule-item">
-                <div class="left">
-                    <div class="start-at">
-                        20:55
-                    </div>
-                    <div class="end-at">
-                        23:28散场
-                    </div>
-                </div>
-                <div class="middle">
-                    <div class="language">
-                        国语2D
-                    </div>
-                    <div class="hall">
-                        7号VIP厅
-                    </div>
-                </div>
-                <div class="right">
-                    <div class="buy-ticket">
-                        购票
-                    </div>
-                    <div class="lowest-price">
-                        <span class="price-icon">￥</span>88
-                    </div>
-                </div>
-            </div>
-            <div class="schedule-item">
-                <div class="left">
-                    <div class="start-at">
-                        21:55
-                    </div>
-                    <div class="end-at">
-                        00:28散场
-                    </div>
-                </div>
-                <div class="middle">
-                    <div class="language">
-                        国语2D
-                    </div>
-                    <div class="hall">
-                        6号厅
-                    </div>
-                </div>
-                <div class="right">
-                    <div class="buy-ticket">
-                        购票
-                    </div>
-                    <div class="lowest-price">
-                        <span class="price-icon">￥</span>43
+                        <span class="price-icon">￥</span
+                        >{{ item.salePrice / 100 }}
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </template>
+
+<script>
+import moment from "moment";
+moment.locale("zh-cn");
+import { cinemaFData, cinemaListXp } from "@/api/api";
+
+export default {
+    data() {
+        return {
+            sched: [],
+            id: "",
+            cinemaPic: [],
+        };
+    },
+    props: ["timer", "film", "schedules"],
+    watch: {
+        schedules: async function(newx, oldx) {
+            this.sched = newx;
+        },
+        ID: function(newx) {
+            this.id = newx;
+        },
+        timer: async function(newx) {
+            let cinemaID = localStorage.getItem("cinemaId");
+            let film = localStorage.getItem("setFilmId");
+            let cinemaFD = await cinemaFData(cinemaID, film, newx);
+            this.sched = cinemaFD.data.data.schedules;
+        },
+    },
+
+    filters: {
+        week: function(value) {
+            return moment(value * 1000).format("HH:mm");
+        },
+    },
+    async mounted() {
+        let cinemaId = localStorage.getItem("cinemaId");
+        let cinemaListX = await cinemaListXp(cinemaId);
+        this.cinemaPic = cinemaListX.data.data.films; // 影片详情
+        let film = this.cinemaPic[0].filmId;
+        let time = this.cinemaPic[0].showDate[0];
+        let cinemaFD = await cinemaFData(cinemaId, film, time);
+        this.sched = cinemaFD.data.data.schedules;
+    },
+};
+</script>
 
 <style scoped>
 .cinema-schedule .schedule-wrap .schedule-list {
